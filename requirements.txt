@@ -5,9 +5,6 @@
 # Detección de puntos del cuerpo (keypoints) en cada frame del video
 mediapipe
 
-# Lectura y procesamiento de video frame a frame, y dibujo del esqueleto
-opencv-python-headless
-
 # Cálculo de ángulos articulares y operaciones matemáticas con coordenadas
 numpy
 
