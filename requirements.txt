@@ -1,0 +1,21 @@
+# Librerías del Analizador de Saque de Tenis
+# Instalar con: pip install -r requirements.txt
+# Requiere Python 3.12 (MediaPipe no soporta 3.13 ni 3.14)
+
+# Detección de puntos del cuerpo (keypoints) en cada frame del video
+mediapipe
+
+# Lectura y procesamiento de video frame a frame, y dibujo del esqueleto
+opencv-python-headless
+
+# Cálculo de ángulos articulares y operaciones matemáticas con coordenadas
+numpy
+
+# Interfaz web simple para subir el video y mostrar el feedback al usuario
+streamlit
+
+# Lectura de variables de entorno desde archivo .env (API keys, configuración)
+python-dotenv
+
+# SDK oficial de Anthropic para usar la API de Claude desde Python
+anthropic

@@ -1,0 +1,40 @@
+# =============================================================
+# .gitignore — Analizador de Saque de Tenis
+# Archivos y carpetas que Git debe ignorar completamente
+# =============================================================
+
+# --- Videos (pueden pesar cientos de MB) ---
+videos/
+
+# --- Modelos de IA (archivos .task de MediaPipe, ~30 MB cada uno) ---
+modelos/
+
+# --- Datos intermedios (keypoints y resultados generados) ---
+datos/
+
+# --- Entorno virtual de Python ---
+# Esta carpeta se crea con "py -3.12 -m venv venv"
+# No se sube a Git porque cada persona la crea en su propia máquina
+venv/
+.venv/
+
+# --- Archivos compilados de Python (se generan automáticamente) ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- Archivos temporales y del sistema ---
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
+
+# --- ngrok ---
+ngrok.exe
+*.lnk
+
+# --- Archivos de configuración de entornos de desarrollo ---
+.env
+.vscode/
+.idea/
