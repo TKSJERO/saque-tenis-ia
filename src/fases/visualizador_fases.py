@@ -5,7 +5,6 @@ Usa los keypoints ya extraídos (JSON del Hito 1) y el dict de fases del detecto
 No reprocesa con MediaPipe.
 """
 
-import cv2
 import numpy as np
 from pathlib import Path
 
@@ -50,6 +49,8 @@ def generar_video_fases(ruta_video_entrada, fases, ruta_salida_carpeta, fps_orig
     Returns:
         ruta del video de salida como string
     """
+    import cv2
+
     ruta_video_entrada = Path(ruta_video_entrada)
     ruta_salida_carpeta = Path(ruta_salida_carpeta)
     ruta_salida_carpeta.mkdir(parents=True, exist_ok=True)

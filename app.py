@@ -42,18 +42,22 @@ inyectar_css()
 # ── Descarga automática del modelo de MediaPipe ─────────────────────────────
 
 def descargar_modelo_si_falta():
-    """Descarga el modelo de MediaPipe (~30 MB) si no está en disco."""
-    ruta_modelo = RAIZ / "modelos" / "pose_landmarker_full.task"
-    if ruta_modelo.exists():
+    """Descarga el modelo de MediaPipe (~30 MB) si no está en disco.
+    Usa /tmp/ en la nube (escritura permitida) y modelos/ en local."""
+    ruta_local = RAIZ / "modelos" / "pose_landmarker_full.task"
+    ruta_tmp   = Path("/tmp/saque_ia_modelos/pose_landmarker_full.task")
+
+    if ruta_local.exists() or ruta_tmp.exists():
         return
+
     url = (
         "https://storage.googleapis.com/mediapipe-models/"
         "pose_landmarker/pose_landmarker_full/float16/latest/"
         "pose_landmarker_full.task"
     )
-    ruta_modelo.parent.mkdir(parents=True, exist_ok=True)
+    ruta_tmp.parent.mkdir(parents=True, exist_ok=True)
     with st.spinner("Descargando modelo de detección de pose (~30 MB)..."):
-        urllib.request.urlretrieve(url, ruta_modelo)
+        urllib.request.urlretrieve(url, ruta_tmp)
 
 
 descargar_modelo_si_falta()

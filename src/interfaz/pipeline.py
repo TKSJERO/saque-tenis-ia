@@ -23,7 +23,9 @@ from src.feedback.generador_feedback import (
     guardar_feedback,
 )
 
-RUTA_MODELO = RAIZ / "modelos" / "pose_landmarker_full.task"
+_ruta_modelo_local = RAIZ / "modelos" / "pose_landmarker_full.task"
+_ruta_modelo_tmp   = Path("/tmp/saque_ia_modelos/pose_landmarker_full.task")
+RUTA_MODELO = _ruta_modelo_local if _ruta_modelo_local.exists() else _ruta_modelo_tmp
 
 
 def ejecutar_paso_1(ruta_video: Path, nombre_base: str):
