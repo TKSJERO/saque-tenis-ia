@@ -4,12 +4,7 @@
 # usando MediaPipe Pose Landmarker, guarda los datos en JSON y genera
 # un video de salida con el esqueleto dibujado encima.
 
-import cv2
 import json
-import mediapipe as mp
-from mediapipe.tasks import python as mp_tasks
-from mediapipe.tasks.python import vision as mp_vision
-from mediapipe.tasks.python.vision import RunningMode
 from pathlib import Path
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -96,6 +91,12 @@ def procesar_video(ruta_video, ruta_modelo):
     Retorna:
         (ruta_json, ruta_video_salida) — rutas de los archivos generados
     """
+    import cv2
+    import mediapipe as mp
+    from mediapipe.tasks import python as mp_tasks
+    from mediapipe.tasks.python import vision as mp_vision
+    from mediapipe.tasks.python.vision import RunningMode
+
     ruta_video  = Path(ruta_video)
     ruta_modelo = Path(ruta_modelo)
     nombre_base = ruta_video.stem  # nombre del archivo sin extensión

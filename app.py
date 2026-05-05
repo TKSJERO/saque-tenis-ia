@@ -6,7 +6,6 @@
 
 import os
 import sys
-import cv2
 from pathlib import Path
 
 import streamlit as st
@@ -165,6 +164,7 @@ else:
 
 # Verificar orientación del video (solo la primera vez)
 if st.session_state.video_es_vertical is None:
+    import cv2
     cap = cv2.VideoCapture(str(ruta_video_entrada))
     if not cap.isOpened():
         st.error(
