@@ -73,8 +73,9 @@ def verificar_prerequisitos():
     """
     errores = []
 
-    ruta_modelo = RAIZ / "modelos" / "pose_landmarker_full.task"
-    if not ruta_modelo.exists():
+    ruta_modelo_local = RAIZ / "modelos" / "pose_landmarker_full.task"
+    ruta_modelo_tmp   = Path("/tmp/saque_ia_modelos/pose_landmarker_full.task")
+    if not ruta_modelo_local.exists() and not ruta_modelo_tmp.exists():
         errores.append(
             "**Modelo de MediaPipe no encontrado** "
             "(`modelos/pose_landmarker_full.task`).\n\n"
@@ -154,8 +155,17 @@ nombre_archivo = archivo_subido.name
 if st.session_state.video_nombre != nombre_archivo:
     _inicializar_estado(nombre_archivo)
 
-nombre_base        = Path(nombre_archivo).stem
-ruta_video_entrada = RAIZ / "videos" / "entrada" / nombre_archivo
+nombre_base = Path(nombre_archivo).stem
+
+# Elegir dónde guardar el video: en la carpeta del proyecto si es escribible,
+# o en /tmp/ si estamos en Streamlit Cloud (filesystem de solo lectura).
+import os as _os
+_carpeta_entrada = (
+    RAIZ / "videos" / "entrada"
+    if _os.access(str(RAIZ), _os.W_OK)
+    else Path("/tmp/saque_ia_salida/videos/entrada")
+)
+ruta_video_entrada = _carpeta_entrada / nombre_archivo
 
 # Guardar el archivo en disco solo la primera vez que se sube
 if st.session_state.video_guardado_en is None:

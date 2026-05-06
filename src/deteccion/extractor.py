@@ -79,14 +79,16 @@ def _dibujar_esqueleto(frame, landmarks, ancho, alto):
     return frame
 
 
-def procesar_video(ruta_video, ruta_modelo):
+def procesar_video(ruta_video, ruta_modelo, ruta_json=None, ruta_video_salida=None):
     """
     Procesa un video completo: detecta pose en cada frame, guarda los
     keypoints en un JSON y genera un video con el esqueleto dibujado.
 
     Parámetros:
-        ruta_video  : ruta al archivo de video (mp4, mov, etc.)
-        ruta_modelo : ruta al archivo pose_landmarker_full.task
+        ruta_video        : ruta al archivo de video (mp4, mov, etc.)
+        ruta_modelo       : ruta al archivo pose_landmarker_full.task
+        ruta_json         : ruta de salida del JSON (opcional; por defecto datos/keypoints/)
+        ruta_video_salida : ruta de salida del video (opcional; por defecto videos/salida/)
 
     Retorna:
         (ruta_json, ruta_video_salida) — rutas de los archivos generados
@@ -102,8 +104,18 @@ def procesar_video(ruta_video, ruta_modelo):
     nombre_base = ruta_video.stem  # nombre del archivo sin extensión
 
     # Definir dónde se guardarán los archivos de salida
-    ruta_json          = Path("datos/keypoints") / f"{nombre_base}_keypoints.json"
-    ruta_video_salida  = Path("videos/salida")   / f"{nombre_base}_esqueleto.mp4"
+    if ruta_json is None:
+        ruta_json = Path("datos/keypoints") / f"{nombre_base}_keypoints.json"
+    else:
+        ruta_json = Path(ruta_json)
+    if ruta_video_salida is None:
+        ruta_video_salida = Path("videos/salida") / f"{nombre_base}_esqueleto.mp4"
+    else:
+        ruta_video_salida = Path(ruta_video_salida)
+
+    # Crear carpetas de salida si no existen
+    ruta_json.parent.mkdir(parents=True, exist_ok=True)
+    ruta_video_salida.parent.mkdir(parents=True, exist_ok=True)
 
     # ── Abrir el video con OpenCV ──────────────────────────────────────────
     cap = cv2.VideoCapture(str(ruta_video))

@@ -4,6 +4,7 @@
 # Si existe → retorna la ruta y fue_cacheado=True sin reprocesar.
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -27,6 +28,14 @@ _ruta_modelo_local = RAIZ / "modelos" / "pose_landmarker_full.task"
 _ruta_modelo_tmp   = Path("/tmp/saque_ia_modelos/pose_landmarker_full.task")
 RUTA_MODELO = _ruta_modelo_local if _ruta_modelo_local.exists() else _ruta_modelo_tmp
 
+# En Streamlit Cloud el filesystem de /mount/src/ es de solo lectura.
+# Si RAIZ no es escribible, guardamos todos los resultados en /tmp/.
+if os.access(str(RAIZ), os.W_OK):
+    BASE = RAIZ
+else:
+    BASE = Path("/tmp/saque_ia_salida")
+    BASE.mkdir(parents=True, exist_ok=True)
+
 
 def ejecutar_paso_1(ruta_video: Path, nombre_base: str):
     """
@@ -35,8 +44,8 @@ def ejecutar_paso_1(ruta_video: Path, nombre_base: str):
 
     Retorna: (ruta_keypoints, ruta_esqueleto, fue_cacheado, total_frames, frames_con_pose)
     """
-    ruta_keypoints = RAIZ / "datos" / "keypoints" / f"{nombre_base}_keypoints.json"
-    ruta_esqueleto = RAIZ / "videos"  / "salida"   / f"{nombre_base}_esqueleto.mp4"
+    ruta_keypoints = BASE / "datos" / "keypoints" / f"{nombre_base}_keypoints.json"
+    ruta_esqueleto = BASE / "videos"  / "salida"   / f"{nombre_base}_esqueleto.mp4"
 
     if ruta_keypoints.exists():
         with open(ruta_keypoints, encoding="utf-8") as f:
@@ -50,7 +59,11 @@ def ejecutar_paso_1(ruta_video: Path, nombre_base: str):
     ruta_esqueleto.parent.mkdir(parents=True, exist_ok=True)
 
     try:
-        ruta_json_out, ruta_video_out = _procesar_video(ruta_video, RUTA_MODELO)
+        ruta_json_out, ruta_video_out = _procesar_video(
+            ruta_video, RUTA_MODELO,
+            ruta_json=ruta_keypoints,
+            ruta_video_salida=ruta_esqueleto,
+        )
     except FileNotFoundError:
         raise RuntimeError(
             "No se pudo abrir el video. Verificá que el archivo no esté dañado."
@@ -83,8 +96,8 @@ def ejecutar_paso_2(ruta_keypoints: Path, ruta_video_original: Path, nombre_base
 
     Retorna: (ruta_fases, ruta_video_fases, fue_cacheado, n_fases)
     """
-    ruta_fases       = RAIZ / "datos"   / "resultados" / f"{nombre_base}_fases.json"
-    ruta_video_fases = RAIZ / "videos"  / "salida"     / f"{nombre_base}_fases.mp4"
+    ruta_fases       = BASE / "datos"   / "resultados" / f"{nombre_base}_fases.json"
+    ruta_video_fases = BASE / "videos"  / "salida"     / f"{nombre_base}_fases.mp4"
 
     if ruta_fases.exists():
         with open(ruta_fases, encoding="utf-8") as f:
@@ -123,7 +136,7 @@ def ejecutar_paso_3(ruta_keypoints: Path, ruta_fases: Path, nombre_base: str):
 
     Retorna: (ruta_angulos, fue_cacheado, n_parametros)
     """
-    ruta_angulos = RAIZ / "datos" / "angulos" / f"{nombre_base}_angulos.json"
+    ruta_angulos = BASE / "datos" / "angulos" / f"{nombre_base}_angulos.json"
 
     if ruta_angulos.exists():
         with open(ruta_angulos, encoding="utf-8") as f:
@@ -158,7 +171,7 @@ def ejecutar_paso_4(ruta_angulos: Path, nombre_base: str):
     Retorna: (texto_feedback, metricas)
     metricas contiene: tiempo_segundos, tokens_input, tokens_output, costo_usd
     """
-    ruta_feedback = RAIZ / "datos" / "feedback" / f"{nombre_base}_feedback.md"
+    ruta_feedback = BASE / "datos" / "feedback" / f"{nombre_base}_feedback.md"
     ruta_feedback.parent.mkdir(parents=True, exist_ok=True)
 
     try:

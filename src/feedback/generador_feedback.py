@@ -17,7 +17,6 @@ import time
 from pathlib import Path
 
 from dotenv import load_dotenv
-import anthropic
 
 # Cargar variables de entorno desde .env
 load_dotenv()
@@ -262,6 +261,8 @@ def generar_feedback(input_estructurado):
     Retorna una tupla: (texto_feedback: str, metricas: dict)
     metricas contiene tokens_input, tokens_output, tiempo_segundos, costo_usd.
     """
+    import anthropic  # Import lazy: se carga solo cuando se genera feedback
+
     api_key = os.getenv('ANTHROPIC_API_KEY')
     if not api_key or api_key.strip() == '':
         raise ValueError("No se encontró ANTHROPIC_API_KEY en .env")
